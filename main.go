@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +31,15 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 	`)	
 }
 
+//Section 3 - Exercise 1 - Use URL Parameters
+func galleryHandler(w http.ResponseWriter, r *http.Request) {
+	imageID := chi.URLParam(r, "imageID")
+
+	//fmt.Fprint(w, "<h1>Gallery Page </h1>")	
+	w.Write([]byte(fmt.Sprintf("Image ID: %v", imageID)))
+}
+
+
 /* func pathHandler(w http.ResponseWriter, r *http.Request) {
 	switch(r.URL.Path) {
 	case "/":
@@ -39,23 +51,20 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 	}
 } */
 
-type Router struct {}
-
-func (router Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch(r.URL.Path) {
-		case "/":
-			homeHandler(w, r)
-		case "/contact":
-			contactHandler(w, r)
-		case "/faq":
-			faqHandler(w, r)
-		default:
-			http.Error(w, "Page not found", http.StatusNotFound)
-	}
-}
 
 func main() {
-	var router Router
-	fmt.Println("Server is running on http://localhost:8080")
-	http.ListenAndServe(":3000", router)
+	r := chi.NewRouter()
+	//r.Use(middleware.Logger) //Section 3 - Exercise 2 Use Middleware Logger GLOBAL
+	r.Get("/", homeHandler)
+	r.Get("/contact", contactHandler)
+	r.Get("/faq", faqHandler)
+	r.Route("/admin", func(r chi.Router) {
+		r.Use(middleware.Logger)
+		r.Get("/gallery/{imageID}", galleryHandler) //Section 3 - Exercise 1 - Use URL Parameters only for one route
+	})
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Page not found", http.StatusNotFound)
+	})
+	fmt.Println("Server is running on http://localhost:3000")
+	http.ListenAndServe(":3000", r)
 }
