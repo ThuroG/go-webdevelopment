@@ -1,4 +1,11 @@
-Hello, {{.Name}}
+Hello, 
+{{- if .Name}} 
+  {{.Name}} 
+{{- else}} 
+  there
+{{- end}}
+
+You live at {{.Address.Street}} in {{.Address.ZipCode}} {{.Address.City}}
 
 You are {{.Age}} years old
 
