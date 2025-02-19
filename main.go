@@ -2,30 +2,30 @@ package main
 
 import (
 	"fmt"
+	"go-webdevelopment/views"
 	"log"
 	"net/http"
 	"path/filepath"
-	"text/template"
-
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
 
 
 func executeTemplate(w http.ResponseWriter, filepath string){
-	w.Header().Set("Content-Type", "text/html, charset=utf-8")
-	tpl, err := template.ParseFiles(filepath)
+	t, err := views.Parse(filepath)
+	//w.Header().Set("Content-Type", "text/html, charset=utf-8")
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
 		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
 		return
 	}
-	err = tpl.Execute(w, nil)	
-	if err != nil {
-		log.Printf("Error executing template: %v", err)
-		http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
-		return
-	}
+	 t.Execute(w, nil)
+	// err = tpl.Execute(w, nil)	
+	// if err != nil {
+	// 	log.Printf("Error executing template: %v", err)
+	// 	http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
+	// 	return
+	// }
 }
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	tplPath := filepath.Join("templates", "home.gohtml")
