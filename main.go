@@ -2,54 +2,22 @@ package main
 
 import (
 	"fmt"
+	"go-webdevelopment/controllers"
 	"go-webdevelopment/views"
-	"log"
 	"net/http"
 	"path/filepath"
+
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 )
 
-
-func executeTemplate(w http.ResponseWriter, filepath string){
-	t, err := views.Parse(filepath)
-	//w.Header().Set("Content-Type", "text/html, charset=utf-8")
-	if err != nil {
-		log.Printf("Error parsing template: %v", err)
-		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
-		return
-	}
-	 t.Execute(w, nil)
-	// err = tpl.Execute(w, nil)	
-	// if err != nil {
-	// 	log.Printf("Error executing template: %v", err)
-	// 	http.Error(w, "There was an error executing the template", http.StatusInternalServerError)
-	// 	return
-	// }
-}
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "home.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-func contactHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "contact.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-func faqHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "faq.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-//Section 3 - Exercise 1 - Use URL Parameters
+// Section 3 - Exercise 1 - Use URL Parameters
 func galleryHandler(w http.ResponseWriter, r *http.Request) {
 	imageID := chi.URLParam(r, "imageID")
 
-	//fmt.Fprint(w, "<h1>Gallery Page </h1>")	
+	//fmt.Fprint(w, "<h1>Gallery Page </h1>")
 	w.Write([]byte(fmt.Sprintf("Image ID: %v", imageID)))
 }
-
 
 /* func pathHandler(w http.ResponseWriter, r *http.Request) {
 	switch(r.URL.Path) {
@@ -62,13 +30,20 @@ func galleryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 } */
 
-
 func main() {
 	r := chi.NewRouter()
 	//r.Use(middleware.Logger) //Section 3 - Exercise 2 Use Middleware Logger GLOBAL
-	r.Get("/", homeHandler)
-	r.Get("/contact", contactHandler)
-	r.Get("/faq", faqHandler)
+
+	r.Get("/", controllers.StaticHandler(
+		views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))))
+
+
+	r.Get("/contact", controllers.StaticHandler(
+		views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))))
+
+	r.Get("/faq", controllers.StaticHandler(
+		views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
+
 	r.Route("/admin", func(r chi.Router) {
 		r.Use(middleware.Logger)
 		r.Get("/gallery/{imageID}", galleryHandler) //Section 3 - Exercise 1 - Use URL Parameters only for one route

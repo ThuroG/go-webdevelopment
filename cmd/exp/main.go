@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 	"html/template"
+	"errors"
+	"fmt"
 )
 
 type User struct {
@@ -18,11 +20,34 @@ type Address struct {
 	City string
 }
 
+func Connect() error {
+	//pretend we get an error
+	return errors.New("failed to create connection")
+}
+
+func CreateUser() error {
+	err := Connect()
+	if err != nil {
+		return fmt.Errorf("failed to create USER: %w", err)
+	}
+	return nil
+}
+
+func CreateOrg() error {
+	err := CreateUser()
+	if err != nil {
+		return fmt.Errorf("failed to create org: %w", err)
+	}
+	return nil
+}
+
+//HAS TO BE RUN IN CMD/EXP FOLDER otherwise it will not work
 func main() {
 	t, err := template.ParseFiles("hello.gohtml")
 	if err != nil {
 		panic(err)
 	}
+
 
 	address := Address{
 		Street: "123 Main St",
@@ -41,4 +66,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// fmt.ErrorF will append all error messages so that it is easier to debug
+	// use err1 because err already in use before
+	err1:= CreateOrg()
+	if err1 != nil {
+		fmt.Println(err1)
+	}
+
 }
