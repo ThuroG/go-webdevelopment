@@ -5,7 +5,13 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"embed"
+
+
 )
+
+//go:embed *
+var FS embed.FS
 
 var ErrNotFound = errors.New("not found")
 
@@ -43,9 +49,10 @@ func CreateOrg() error {
 	return nil
 }
 
-//HAS TO BE RUN IN CMD/EXP FOLDER otherwise it will not work
+// SOLVED: HAS TO BE RUN IN CMD/EXP FOLDER otherwise it will not work
 func main() {
-	t := template.Must(template.ParseFiles("hello.gohtml"))
+	// Section 7 use ParseFS to call it from anywhere
+	t := template.Must(template.ParseFS(FS, "hello.gohtml"))
 
 
 	address := Address{

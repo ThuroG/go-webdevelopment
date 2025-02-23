@@ -6,7 +6,7 @@ import (
 	"go-webdevelopment/controllers"
 	"go-webdevelopment/views"
 	"net/http"
-	"path/filepath"
+	"go-webdevelopment/templates"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
@@ -15,7 +15,7 @@ import (
 // Section 3 - Exercise 1 - Use URL Parameters
 func galleryHandler(w http.ResponseWriter, r *http.Request) {
 	imageID := chi.URLParam(r, "imageID")
-	views.Must(views.Parse(filepath.Join("templates", "gallery.gohtml"))).Execute(w, imageID) // Section 6 - Exercise: Define another static handler
+	views.Must(views.ParseFS(templates.FS, "gallery.gohtml")).Execute(w, imageID) // Section 6 - Exercise: Define another static handler
 	//fmt.Fprint(w, "<h1>Gallery Page </h1>")
 	//w.Write([]byte(fmt.Sprintf("Image ID: %v", imageID)))
 }
@@ -36,14 +36,14 @@ func main() {
 	//r.Use(middleware.Logger) //Section 3 - Exercise 2 Use Middleware Logger GLOBAL
 
 	r.Get("/", controllers.StaticHandler(
-		views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))))
+		views.Must(views.ParseFS(templates.FS, "home.gohtml"))))
 
 
 	r.Get("/contact", controllers.StaticHandler(
-		views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))))
+		views.Must(views.ParseFS(templates.FS, "contact.gohtml"))))
 
 	r.Get("/faq", controllers.StaticHandler(
-		views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
+		views.Must(views.ParseFS(templates.FS, "faq.gohtml"))))
 
 	r.Route("/gallery", func(r chi.Router) {
 		r.Use(middleware.Logger)
