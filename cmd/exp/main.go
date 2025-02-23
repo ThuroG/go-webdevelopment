@@ -1,11 +1,13 @@
 package main
 
 import (
-	"os"
-	"html/template"
 	"errors"
 	"fmt"
+	"html/template"
+	"os"
 )
+
+var ErrNotFound = errors.New("not found")
 
 type User struct {
 	Name string
@@ -43,10 +45,7 @@ func CreateOrg() error {
 
 //HAS TO BE RUN IN CMD/EXP FOLDER otherwise it will not work
 func main() {
-	t, err := template.ParseFiles("hello.gohtml")
-	if err != nil {
-		panic(err)
-	}
+	t := template.Must(template.ParseFiles("hello.gohtml"))
 
 
 	address := Address{
@@ -62,10 +61,8 @@ func main() {
 		Address: address,
 	}
 
-	err = t.Execute(os.Stdout, user)
-	if err != nil {
-		panic(err)
-	}
+	t.Execute(os.Stdout, user)
+
 
 	// fmt.ErrorF will append all error messages so that it is easier to debug
 	// use err1 because err already in use before
@@ -73,5 +70,26 @@ func main() {
 	if err1 != nil {
 		fmt.Println(err1)
 	}
+	
+	// Section 6 - Exercise: Use Errors.Is to detect error kind (see global variable)
+	err := B()
+	if errors.Is(err, ErrNotFound) {
+		fmt.Println("This error has been indeed not found (yet)")
+	} else {
+		fmt.Println(err)
+	}
+  }
+  
 
-}
+  
+  func A() error {
+	  return ErrNotFound
+  }
+  
+  func B() error {
+	  err := A()
+	if err != nil {
+		return fmt.Errorf("b: %w", err)
+	}
+	return nil
+  }

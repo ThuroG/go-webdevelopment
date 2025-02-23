@@ -1,6 +1,7 @@
 package main
 
 import (
+
 	"fmt"
 	"go-webdevelopment/controllers"
 	"go-webdevelopment/views"
@@ -14,9 +15,9 @@ import (
 // Section 3 - Exercise 1 - Use URL Parameters
 func galleryHandler(w http.ResponseWriter, r *http.Request) {
 	imageID := chi.URLParam(r, "imageID")
-
+	views.Must(views.Parse(filepath.Join("templates", "gallery.gohtml"))).Execute(w, imageID) // Section 6 - Exercise: Define another static handler
 	//fmt.Fprint(w, "<h1>Gallery Page </h1>")
-	w.Write([]byte(fmt.Sprintf("Image ID: %v", imageID)))
+	//w.Write([]byte(fmt.Sprintf("Image ID: %v", imageID)))
 }
 
 /* func pathHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,9 +45,9 @@ func main() {
 	r.Get("/faq", controllers.StaticHandler(
 		views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
 
-	r.Route("/admin", func(r chi.Router) {
+	r.Route("/gallery", func(r chi.Router) {
 		r.Use(middleware.Logger)
-		r.Get("/gallery/{imageID}", galleryHandler) //Section 3 - Exercise 1 - Use URL Parameters only for one route
+	    r.Get("/{imageID}", galleryHandler) //Section 3 - Exercise 1 - Use URL Parameters only for one route
 	})
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
