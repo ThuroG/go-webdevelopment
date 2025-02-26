@@ -8,8 +8,9 @@ import (
 	"net/http"
 )
 
-func ParseFS(fs fs.FS, patterns string) (Template, error) {
-	tpl, err := template.ParseFS(fs, patterns)
+//We use variadic parameters to insert 0,1 or multiple patterns --> we use it to initialize the .gohtml at startup
+func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
+	tpl, err := template.ParseFS(fs, patterns...)
 	if err != nil {
 		return Template{}, fmt.Errorf("parsing template: %w", err)
 	}

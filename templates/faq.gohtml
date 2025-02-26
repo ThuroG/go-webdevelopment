@@ -1,8 +1,13 @@
+{{template "header"}}
 <h1>FAQ Page </h1> 
-	
-	<p> Q: Is there a free Version </p>
-	<p> A: Yes, there is a free version of the software. </p>
-	
-	<p> Q: How do I get the free version? </p>
-	<p> A: You can download the free version from our website. </p>
-	
+
+<ul>
+{{range .}}
+	{{template "qa" .}}
+{{end}}
+</ul>
+
+{{define "qa"}}
+<li><b> {{.Question}} </b> {{.Answer}} </li>
+{{end}}
+{{template "footer"}}
