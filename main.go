@@ -15,7 +15,7 @@ import (
 // Section 3 - Exercise 1 - Use URL Parameters
 func galleryHandler(w http.ResponseWriter, r *http.Request) {
 	imageID := chi.URLParam(r, "imageID")
-	views.Must(views.ParseFS(templates.FS, "gallery.gohtml", "layout-parts.gohtml")).Execute(w, imageID) // Section 6 - Exercise: Define another static handler
+	views.Must(views.ParseFS(templates.FS, "gallery.gohtml", "tailwind.gohtml")).Execute(w, imageID) // Section 6 - Exercise: Define another static handler
 	//fmt.Fprint(w, "<h1>Gallery Page </h1>")
 	//w.Write([]byte(fmt.Sprintf("Image ID: %v", imageID)))
 }
@@ -36,14 +36,14 @@ func main() {
 	//r.Use(middleware.Logger) //Section 3 - Exercise 2 Use Middleware Logger GLOBAL
 
 	r.Get("/", controllers.StaticHandler(
-		views.Must(views.ParseFS(templates.FS, "home.gohtml", "layout-parts.gohtml"))))
+		views.Must(views.ParseFS(templates.FS, "home.gohtml", "tailwind.gohtml"))))
 
 
 	r.Get("/contact", controllers.StaticHandler(
-		views.Must(views.ParseFS(templates.FS, "contact.gohtml", "layout-parts.gohtml"))))
+		views.Must(views.ParseFS(templates.FS, "contact.gohtml", "tailwind.gohtml"))))
 
 	r.Get("/faq", controllers.FAQ(
-		views.Must(views.ParseFS(templates.FS, "faq.gohtml", "layout-parts.gohtml"))))
+		views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))))
 
 	r.Route("/gallery", func(r chi.Router) {
 		r.Use(middleware.Logger)
