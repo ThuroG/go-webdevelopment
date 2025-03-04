@@ -1,12 +1,11 @@
 package main
 
 import (
-
 	"fmt"
 	"go-webdevelopment/controllers"
+	"go-webdevelopment/templates"
 	"go-webdevelopment/views"
 	"net/http"
-	"go-webdevelopment/templates"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
@@ -49,6 +48,11 @@ func main() {
 		r.Use(middleware.Logger)
 	    r.Get("/{imageID}", galleryHandler) //Section 3 - Exercise 1 - Use URL Parameters only for one route
 	})
+
+	
+	r.Get("/signup", controllers.StaticHandler(
+		views.Must(views.ParseFS(templates.FS, "signup.gohtml", "tailwind.gohtml"))))
+
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
