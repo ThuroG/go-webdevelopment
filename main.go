@@ -52,7 +52,7 @@ func main() {
 			"upload.gohtml", "tailwind.gohtml",
 		))
 		r.Get("/", galleryC.New)
-		r.Post("/upload", galleryC.Upload)
+		r.Post("/upload", galleryC.Upload) //TODO: Fix upload controller
 	    r.Get("/{imageID}", galleryHandler) //Section 3 - Exercise 1 - Use URL Parameters only for one route
 	})
 
