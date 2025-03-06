@@ -1,0 +1,41 @@
+{{template "header" .}}
+<div class="py-12 flex">
+    <div class="px-8 py-8 bg-white rounded shadow">
+        <h1 class="pt-4 pb-8 text-center text-3xl font-bold text-gray-900"> Gallery </h1>
+        <form action="/upload" method="post">
+            <div class="py-2">
+                <label for="image" class="text-sm font-semibold text-gray-800">Upload an Image: </label>
+                <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/gif" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="file_input_help" />
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG or GIF (MAX. 5MB).</p>
+                <p id="file-size-error" style="color: red; display: none;">Die Datei ist zu groß (max. 5MB).</p>
+            </div>
+            <script>
+                document.getElementById('image').addEventListener('change', function() {
+                    const file = this.files[0];
+                    const maxSize = 5 * 1024 * 1024; // 5MB in Bytes
+                    const errorElement = document.getElementById('file-size-error');
+            
+                    if (file && file.size > maxSize) {
+                        errorElement.style.display = 'block';
+                        this.value = ''; // Datei-Auswahl zurücksetzen
+                    } else {
+                        errorElement.style.display = 'none';
+                    }
+                });
+            </script>
+            </div>
+        </form>
+    </div>
+    <div>
+        <h1 class="pt-4 pb-8 text-center text-3xl font-bold text-gray-900"> Gallery </h1>
+        <div class="grid grid-cols-3 gap-4">
+            {{range .Images}}
+            <div class="bg-white rounded shadow">
+                <img src="./images/{{.}}" class="w-full h-64 object-cover" alt="image" />
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+{{template "footer" .}}

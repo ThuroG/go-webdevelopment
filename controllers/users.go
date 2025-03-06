@@ -19,7 +19,7 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {
-	email := r.FormValue("email") //r.FormValue is also a valid option
+	email := r.FormValue("email") 
 	password := r.FormValue("password")
 	w.Write([]byte(email + " " + password))
 }
