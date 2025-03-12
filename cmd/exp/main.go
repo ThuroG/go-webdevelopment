@@ -147,7 +147,39 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("User created")
+	fmt.Println("User 1 created")
+
+	name2 := "Jon"
+	email2 := "jon@blabla.ch"
+	row := db.QueryRow(`
+		INSERT INTO users (name, email)
+		VALUES ($1, $2)
+		RETURNING id;`, name2, email2)
+	row.Err()
+	var id int
+	err = row.Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("User %d created", id)
+
+	// Query the DB
+	sid := 1
+	srow := db.QueryRow(`
+		SELECT name, email
+		FROM users
+		WHERE id = $1;`, sid)
+	var sname string
+	var semail string
+	err = srow.Scan(&sname, &semail)
+	if err == sql.ErrNoRows {
+		fmt.Println("\n No user found")
+	} 
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("\n Name: %s, Email: %s\n", sname, semail)
+
   }
   
 
