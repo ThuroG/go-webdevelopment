@@ -119,6 +119,35 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Connected")
+
+	// Create a DB Table
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS users (
+			id SERIAL PRIMARY KEY,
+			name TEXT,
+			email TEXT UNIQUE NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS orders (
+			id SERIAL PRIMARY KEY,
+			user_id INT NOT NULL,
+			amount INT,
+			description TEXT
+		);
+	`)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Table created")
+
+	name := "Arthur"
+	email := "arthur.g.7@hotmail.com"
+	_, err = db.Exec(`
+		INSERT INTO users (name, email) 
+		VALUES ($1, $2);`, name, email) //This is the preffered approach in order to avoid SQL Incection
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("User created")
   }
   
 
