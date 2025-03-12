@@ -180,7 +180,48 @@ func main() {
 	}
 	fmt.Printf("\n Name: %s, Email: %s\n", sname, semail)
 
-  }
+	// Create Orders for user 1
+	userID := 1
+	for i := 1; i <= 10; i++ {
+		amount := i * 30
+		desc := fmt.Sprintf("Fake order #%d", i)
+		_, err = db.Exec(`
+			INSERT INTO orders (user_id, amount, description)
+			VALUES ($1, $2, $3);`, userID, amount, desc)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	type Order struct {
+		ID int
+		UserID int
+		Amount int
+		Description string
+	}
+	var orders []Order
+	rows, err := db.Query(`
+		SELECT id, amount, description
+		FROM orders
+		WHERE user_id = $1;`, userID)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var o Order
+		o.UserID = userID
+		err = rows.Scan(&o.ID, &o.Amount, &o.Description)
+		if err != nil {
+			panic(err)
+		}
+		orders = append(orders, o)
+	}
+	if rows.Err() != nil {
+		panic(rows.Err())
+	}
+	fmt.Printf("Orders: %v\n", orders)
+  }	
   
 
   
