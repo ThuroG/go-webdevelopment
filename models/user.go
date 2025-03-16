@@ -2,6 +2,10 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -24,7 +28,7 @@ func (us *UserService) Create(email, password string) (*User, error) {
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return nil, fmt.ErrorF("create user: %w", err)
+		return nil, fmt.Errorf("create user: %w", err)
 	}
 	passwordHash := string(hashedBytes)
 	
@@ -34,17 +38,22 @@ func (us *UserService) Create(email, password string) (*User, error) {
 		PasswordHash: passwordHash,
 	}
 	
-	row := us.DB.QueryRow("
-		INSERT INTO users (email, password_hash)
-		VALUES ($1, $2) RETURNING id", email, passwordHash)
-	var id int
-	err = row.Scan(&user.ID)
+	result, err := us.DB.Exec(`
+	INSERT INTO users (email, password_hash)
+	VALUES (?, ?)`, email, passwordHash)
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
 	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return nil, fmt.Errorf("create user: %w", err)
+	}
+	user.ID = uint(id)
 	return &user, nil //Return the pointer reference
 }
 
 func (us *UserService) Update(user *User) error {
 	//TODO implement
+	return nil
 }
