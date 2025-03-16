@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"go-webdevelopment/models"
 
@@ -15,6 +16,16 @@ type PostgresConfig struct {
 	Password string
 	Database string
 	SSLmode string
+}
+
+
+func (cfg PostgresConfig) String() string {
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Database, cfg.SSLmode)
+}
+
+func Connect() error {
+	//pretend we get an error
+	return errors.New("failed to create connection")
 }
 
 func Main() {
