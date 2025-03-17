@@ -1,12 +1,9 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"go-webdevelopment/models"
-
-	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 type PostgresConfig struct {
@@ -28,19 +25,12 @@ func Connect() error {
 	return errors.New("failed to create connection")
 }
 
-func Main() {
+func main() {
 	// Define the PostgresConfig struct
 
-	cfg := PostgresConfig{
-		Host: "localhost",
-		Port: "5432",
-		User: "thuro",
-		Password: "junglebook",
-		Database: "webapp",
-		SSLmode: "disable",
-	}
+	cfg := models.DefaultPostgresConfig()
 	// Use pgx in order to connect to Postgresql
-	db, err := sql.Open("pgx", cfg.String())
+	db, err := models.Open(cfg)
 	if err != nil {
 		panic(err)
 	}

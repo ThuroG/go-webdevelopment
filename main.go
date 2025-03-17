@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go-webdevelopment/controllers"
+	"go-webdevelopment/models"
 	"go-webdevelopment/templates"
 	"go-webdevelopment/views"
 	"net/http"
@@ -56,8 +57,22 @@ func main() {
 	    r.Get("/{imageID}", galleryHandler) //Section 3 - Exercise 1 - Use URL Parameters only for one route
 	})
 
+	cfg := models.DefaultPostgresConfig()
+	// Use pgx in order to connect to Postgresql
+	db, err := models.Open(cfg)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close() //Close connection if err occurred
+	
+	userService := models.UserService{
+		DB: db,
+	  }
+
 	//Use a controller for creating a new user
-	usersC := controllers.Users{}
+	usersC := controllers.Users{
+		UserService: &userService,
+	}
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
 		 "signup.gohtml", "tailwind.gohtml",

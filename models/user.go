@@ -28,7 +28,7 @@ func (us *UserService) Create(email, password string) (*User, error) {
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return nil, fmt.Errorf("create user: %w", err)
+		return nil, fmt.Errorf("create passwordHash: %w", err)
 	}
 	passwordHash := string(hashedBytes)
 	
@@ -38,18 +38,14 @@ func (us *UserService) Create(email, password string) (*User, error) {
 		PasswordHash: passwordHash,
 	}
 	
-	result, err := us.DB.Exec(`
+	row := us.DB.QueryRow(`
 	INSERT INTO users (email, password_hash)
-	VALUES (?, ?)`, email, passwordHash)
-	if err != nil {
-		return nil, fmt.Errorf("create user: %w", err)
-	}
+	VALUES ($1, $2) RETURNING id`, email, passwordHash)
 
-	id, err := result.LastInsertId()
+	err = row.Scan(&user.ID)
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
 	}
-	user.ID = uint(id)
 	return &user, nil //Return the pointer reference
 }
 
